@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+/*
+ * The visual system is monochrome by default. Colour is a signal, not a
+ * decoration: it appears on active navigation, on the highlighted step of a
+ * diagram, on focus rings, and inside dark technical surfaces where terminal
+ * semantics need it. Everything else is type, space and a hairline border.
+ */
+@theme {
+  /* Light surfaces, in the order they stack. */
+  --color-page: #ffffff;
+  --color-raised: #fafafa;
+  --color-sunken: #f4f4f5;
+
+  /* Ink. */
+  --color-ink: #09090b;
+  --color-body: #3f3f46;
+  --color-muted: #71717a;
+  --color-faint: #a1a1aa;
+
+  /* Hairlines. Two weights: one you notice, one you do not. */
+  --color-line: #e4e4e7;
+  --color-line-soft: #efeff1;
+
+  /* The single product accent. */
+  --color-accent: #3452d1;
+  --color-accent-hover: #2a44b4;
+  --color-accent-tint: #eef1fc;
+
+  /* Dark technical surfaces: terminals, wire dumps, the dashboard. */
+  --color-term: #0b0c10;
+  --color-term-raised: #131521;
+  --color-term-line: #24263a;
+  --color-term-text: #d8d8e0;
+  --color-term-dim: #6e7191;
+  --color-term-faint: #4a4d68;
+  --color-term-green: #6ed49a;
+  --color-term-amber: #e0b062;
+  --color-term-cyan: #6fb6e8;
+  --color-term-rose: #e2707f;
+  --color-term-violet: #a595f0;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono-jetbrains), ui-monospace, "SF Mono", Menlo,
+    Consolas, monospace;
+
+  /* The page is narrow on purpose. Long measures read badly. */
+  --spacing-gutter: 1.5rem;
+
+  --animate-caret: caret 1.05s steps(1) infinite;
+  --animate-rise: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Every in-page anchor has to clear the sticky header. */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background: var(--color-page);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* A visible, high-contrast focus ring everywhere, but only for keyboards. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: #d8dffa;
+    color: var(--color-ink);
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+    font-variant-ligatures: none;
+  }
+}
+
+@layer components {
+  /* The measure used by prose columns and most section headers. */
+  .shell {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 76rem;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Small uppercase label above a section title. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /*
+   * Scrollbars inside dark surfaces. A default light scrollbar on a near-black
+   * terminal is the one detail that gives away a fake one.
+   */
+  .term-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-term-line) transparent;
+  }
+  .term-scroll::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .term-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .term-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-term-line);
+    border-radius: 99px;
+  }
+  .term-scroll::-webkit-scrollbar-thumb:hover {
+    background: #33364f;
+  }
+}
+
+/*
+ * Reduced motion is honoured globally rather than component by component, so a
+ * component added later cannot forget. Motion's own `useReducedMotion` handles
+ * the JS-driven cases; this covers CSS transitions and the caret.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
